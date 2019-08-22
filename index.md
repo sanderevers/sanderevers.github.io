@@ -1,7 +1,8 @@
 # What happen
 
-{% gist 2d58ad27df027fb298ddb12f2caa5f0c %}
+{% for post in site.posts %}
+### [{{post.title}}]({{post.url}})
 
-holy shit!
+{{ post.excerpt }}
 
-{% gist b9fd54fa89c5cb97129da2ef4536bb26 %}
+{% endfor %}
