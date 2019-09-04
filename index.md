@@ -1,8 +1,6 @@
-# What happen
-
 {% for post in site.posts %}
 ### [{{post.title}}]({{post.url}})
 
-{{ post.excerpt }}
+{{ post.excerpt }} [Read more...]({{post.url}})
 
 {% endfor %}

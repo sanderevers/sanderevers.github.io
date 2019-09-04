@@ -1,0 +1,14 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+h1 a {
+  color: #ffffff;
+}
+
+.date {
+  text-align: right;
+  font-style: italic;
+  margin: -2em 50px 0px 0px;
+}

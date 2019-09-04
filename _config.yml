@@ -1,5 +1,8 @@
 theme: jekyll-theme-slate
-title: Sander's sandbox
+title: Expressions of interest
+description: personal professional blog by Sander Evers
 repository: sanderevers/sanderevers.github.io
 github:
   is_project_page: false
+excerpt_separator: <!--more-->
+exclude: [.idea]
