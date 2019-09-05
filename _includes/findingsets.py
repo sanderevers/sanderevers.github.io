@@ -30,26 +30,24 @@ class Table:
 
     def findsets_simple(self):  # using thirdcard_simple
         found = []
-        have = {}
-        for pos,card in enumerate(self.cards):
-            have[card]=pos
-        for i,ci in enumerate(self.cards):
-            for j,cj in enumerate(self.cards[i+1:],i+1):
-                k = have.get(ci.thirdcard_simple(cj),-1)
-                if k > j:
-                    found.append((ci,cj,self.cards[k]))
+        have = set()
+        for j,cj in enumerate(self.cards):
+            for k,ck in enumerate(self.cards[j+1:],j+1):
+                ci = cj.thirdcard_simple(ck)
+                if ci in have:
+                    found.append((ci,cj,ck))
+            have.add(cj)
         return found
 
     def findsets_fast(self):  # using thirdcard_fast
         found = []
-        have = [-1 for _ in range(256)]
-        for pos,card in enumerate(self.cards):
-            have[card.bits]=pos
-        for i,ci in enumerate(self.cards):
-            for j,cj in enumerate(self.cards[i+1:],i+1):
-                k = have[ci.thirdcard_fast(cj)]
-                if k > j:
-                    found.append((ci,cj,self.cards[k]))
+        have = [False for _ in range(256)]
+        for j,cj in enumerate(self.cards):
+            for k,ck in enumerate(self.cards[j+1:],j+1):
+                ci = cj.thirdcard_simple(ck)
+                if have[ci.bits]:
+                    found.append((ci,cj,ck))
+            have[cj.bits] = True
         return found
 
 class Card:
