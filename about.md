@@ -1,5 +1,6 @@
 My name is Sander Evers. I have a job in software development, and a hobby
-as well. In the hobby I have more room for mathematical stuff.
+as well. In the latter capacity I have more room for mathematical stuff,
+and that is probably what you'll mostly find here.
 
 - [Twitter](https://twitter.com/sandvrs)
 - [GitHub](https://github.com/sanderevers)

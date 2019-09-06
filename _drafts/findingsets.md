@@ -13,11 +13,6 @@ Some time ago I wrote a Python program that finds _all sets_ on the table, and e
 > in the ActiveState Python Cookbook, which is not maintained anymore. I've updated the code to Python 3 here,
 > and elaborated the text.
 
-<!--```python
-{% include findingsets.py %}
-```-->
-<!--Look at [line 57](#file-findingsets-py-L57).-->
-
 Here's an example of three SET cards:
 
 <img src="/assets/img/62r.png" style="width: 100px; height: 154px; padding: 12px">
@@ -157,7 +152,7 @@ optimized versions of `findsets`.
 A first optimization is to rewrite the `isset` test. As mentioned I could use `len({v0,v1,v2})!=2`
 for each attribute, but there's another alternative, with only simple integer operations: `(v0+v1+v2)%3==0`.
 I applied this in
-`Card.isset_mod()`[[code]](#file-findingsets-py-L84) and
+`Card.isset_mod()`[[code]](#file-findingsets-py-L82) and
 `Table.findsets_gnt_mod()`[[code]](#file-findingsets-py-L22).
 
 > `%3` yields the remainder after integer division by 3 
@@ -165,15 +160,17 @@ I applied this in
 The second optimization step is to exploit the fact that each combination of two cards `(card0,card1)`
 forms a set with _one unique other card_. This `card2` can be constructed by setting
 `card2.attrs[i] = (-card0.attrs[i]-card1.attrs[i])%3`
-for all `i`, as implemented in `Card.thirdcard_simple()`[[code]](#file-findingsets-py-L89).
+for all `i`, as implemented in `Card.thirdcard_simple()`[[code]](#file-findingsets-py-L87).
 
 There are faster ways for checking whether this card is on the table than by looping over the remaining cards.
-In `Table.findsets_simple()`[[code]](#file-findingsets-py-L31), I put all the table cards in a dictionary `have`;
-a dictionary lookup is performed using
-the card's hash value instead of looping over the dictionary items.
-In addition, we need to check whether the third card
-is behind the other two cards in table order, otherwise sets are doubly counted---to be able to do this,
-the dictionary maps each card to its position on the table.
+In `Table.findsets_simple()`[[code]](#file-findingsets-py-L31), I put all the table cards in a set
+(and by set I mean the Python data structure here) called `have`;
+set membership can be checked faster than looping over all items. I replaced the outer `ci` loop with the
+membership check, and by only inserting a card in the set _after_ it has been processed by the `cj` loop,
+I guarantee that only cards are found that come before `cj` and `ck` in table order.
+
+> An earlier version of the algorithm added all table cards before the double loop. It also remembered their
+> position, so it could check whether a found set was in the correct table order.
 
 In the final optimization, I represent the 4 attributes in one integer, with 2 bits per attribute:
 
@@ -192,13 +189,13 @@ This function must be one that, given two values `x` and `y` in the two-bit repr
 calculates `(-x-y)%3` in this two-bit representation, and that can only use these bitwise operators.
 I won't go into details but I found it with a little help from
 [Karnaugh maps](https://en.wikipedia.org/wiki/Karnaugh_map); the result is
-`Card.thirdcard_fast()`[[code]](#file-findingsets-py-L93).
+`Card.thirdcard_fast()`[[code]](#file-findingsets-py-L91).
 
 This 8-bit representation of cards provides another optimization opportunity.
-Instead of keeping track of which cards are on the table using a _dictionary_, I store the same
-information in a 256-element _list_ (also called `have`): for all cards on the table, I set
-`have[card.bits]=position` (and otherwise `have[card.bits]=-1`). Indexing the list to check whether
-a card is on the table is probably faster than the corresponding dictionary lookup.
+Instead of keeping track of which cards are on the table using a _set_, I store the same
+information in a 256-element _list_ (again called `have`): for all possible cards I first set `have[card.bits]=False`,
+and change this to `True` after a card has been processed by the `cj` loop. Indexing the list to check whether
+a card is on the table is probably faster still than the corresponding set membership check.
 
 ## Full code
 

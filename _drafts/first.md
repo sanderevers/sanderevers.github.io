@@ -1,8 +1,10 @@
 ---
-title: my first post
+title: A blog
 ---
 
-This is my first post, just to test how things work.
+The reason I'm starting this blog is simple: in the past I have published some tech writings, but the websites in
+question were collecting bit-rot, so I wanted to preserve these texts under my own control. 
 
 <!--more-->
-It has a first and a second paragraph!
+I've opted for Jekyll on GitHub Pages because it occupies a sweet spot with low maintenance and high
+customizability, at zero hosting cost. So far I'm quite happy with it.
