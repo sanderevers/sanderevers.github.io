@@ -5,7 +5,8 @@ mathjax: false
 [SET](https://en.wikipedia.org/wiki/Set_(card_game)) is a card game of speedy pattern recognition.
 Twelve cards with different symbols are dealt openly on the table, and all players simultaneously try to
 find a **set** among these cards: a three-card combination that has to satisfy certain rules.
-Some time ago I wrote a Python program that finds _all sets_ on the table, and explores some optimizations.
+Some time ago I wrote a Python program that finds _all sets_ on the table using different methods:
+I started with the most understandable function and then tried to make it as fast as possible.
 
 <!--more-->
 
@@ -20,13 +21,14 @@ Here's an example of three SET cards:
 <img src="/assets/img/77r.png" style="width: 100px; height: 154px; padding: 12px">
 
 Each card has four attributes (or features), which can take three possible values:
-- number of symbols (one/two/three)
-- symbol shape (squiggle/diamond/oval)
-- symbol color (red/purple/green)
-- symbol shading (solid/striped/outlined)
+- number of symbols: one / two / three
+- symbol shape: squiggle / diamond / oval
+- symbol color: red / purple / green
+- symbol shading:  solid / striped / outlined
 
 In Python, I'll represent a card using a 4-tuple of integers (each 0/1/2). For example, the leftmost card
-consists of two squiggles, green and outlined, so it's represented as `Card(1,0,2,2)`. 
+consists of two squiggles, green and outlined, so it's represented as `Card(1,0,2,2)` (the `1` means
+two symbols!). 
 
 Three cards form a **set** if for _each_ attribute, all three cards _either_ have the same value,
 _or_ the three different values. Let's check that the combination shown above is a set:
@@ -102,12 +104,13 @@ class Card:
 I like how Python lets me write `isset` almost literally like the above definition of a set.
 The only tricky thing you need to know is that [zip](https://docs.python.org/3/library/functions.html#zip)
 transforms the three (per-card) lists of 4 attribute values
-into four (per-attribute) lists of 3 card values.
+into four (per-attribute) lists of 3 values.
 
 > Aside: `allsame(v0,v1,v2) or alldifferent(v0,v1,v2)` could be replaced with
 > `len({v0,v1,v2})!=2` for a shorter, but less readable, definition. 
   
-The obvious way to find all sets in a table of 12 cards is to check every 3-card combinations using a three-level
+The obvious way to find all sets in a table of 12 cards is to check every possible 3-card
+combination on the table using a three-level
 nested loop. Let's define a table of random cards and a method that finds the sets using this
 "generate and test" approach:
 
@@ -169,10 +172,13 @@ set membership can be checked faster than looping over all items. I replaced the
 membership check, and by only inserting a card in the set _after_ it has been processed by the `cj` loop,
 I guarantee that only cards are found that come before `cj` and `ck` in table order.
 
-> An earlier version of the algorithm added all table cards before the double loop. It also remembered their
+> An earlier version of the algorithm added all table cards _before_ the double loop. It also remembered their
 > position, so it could check whether a found set was in the correct table order.
 
-In the final optimization, I represent the 4 attributes in one integer, with 2 bits per attribute:
+In the final optimization, I speed up the `thirdcard` function by making it operate on all
+four attributes _at the same time_, using
+[bitwise operators](https://wiki.python.org/moin/BitwiseOperators).
+To do this, the attributes are encoded into one integer, with 2 bits per attribute:
 
     # values of each attribute are encoded like this
     0 -> 00
@@ -182,20 +188,23 @@ In the final optimization, I represent the 4 attributes in one integer, with 2 b
     # example encoding for a whole card:
     (1,0,2,1) -> 01 00 10 01   # so Card(1,0,2,1).bits==73
 
-The purpose of this is to construct the third card by applying a single function to all 4
-attributes at the same time, using 
-[bitwise operators](https://wiki.python.org/moin/BitwiseOperators).
-This function must be one that, given two values `x` and `y` in the two-bit representation,
-calculates `(-x-y)%3` in this two-bit representation, and that can only use these bitwise operators.
+The new function must be one that, given two values `x` and `y` in the two-bit representation,
+calculates `(-x-y)%3` in this two-bit representation, and that can only use bitwise operators.
 I won't go into details but I found it with a little help from
 [Karnaugh maps](https://en.wikipedia.org/wiki/Karnaugh_map); the result is
 `Card.thirdcard_fast()`[[code]](#file-findingsets-py-L91).
 
-This 8-bit representation of cards provides another optimization opportunity.
+Furthermore, the 8-bit representation of cards provides another optimization opportunity.
 Instead of keeping track of which cards are on the table using a _set_, I store the same
 information in a 256-element _list_ (again called `have`): for all possible cards I first set `have[card.bits]=False`,
 and change this to `True` after a card has been processed by the `cj` loop. Indexing the list to check whether
 a card is on the table is probably faster still than the corresponding set membership check.
+
+## Conclusion
+
+I think the final algorithm is a pretty fast way to find sets. Of course, rewriting it in C
+would make it even faster, but my personal interest is in the principles behind the optimizations.
+In my opinion, Python is a great language for communicating the algorithms.
 
 ## Full code
 
