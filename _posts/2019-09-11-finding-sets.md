@@ -16,9 +16,7 @@ I started with the most understandable function and then tried to make it as fas
 
 Here's an example of three SET cards:
 
-<img src="/assets/img/62r.png" style="width: 100px; height: 154px; padding: 12px">
-<img src="/assets/img/65r.png" style="width: 100px; height: 154px; padding: 12px">
-<img src="/assets/img/77r.png" style="width: 100px; height: 154px; padding: 12px">
+<img src="/assets/img/62r.png" style="width: 90px; height: 140px; padding: 4px"><img src="/assets/img/65r.png" style="width: 90px; height: 140px; padding: 4px"><img src="/assets/img/77r.png" style="width: 90px; height: 140px; padding: 4px">
 
 Each card has four attributes (or features), which can take three possible values:
 - number of symbols: one / two / three
@@ -48,9 +46,7 @@ _or_ the three different values. Let's check that the combination shown above is
 
 And here's a combination which is _not_ a set:
 
-<img src="/assets/img/31r.png" style="width: 100px; height: 154px; padding: 12px">
-<img src="/assets/img/68r.png" style="width: 100px; height: 154px; padding: 12px">
-<img src="/assets/img/23r.png" style="width: 100px; height: 154px; padding: 12px">
+<img src="/assets/img/31r.png" style="width: 90px; height: 140px; padding: 4px"><img src="/assets/img/68r.png" style="width: 90px; height: 140px; padding: 4px"><img src="/assets/img/23r.png" style="width: 90px; height: 140px; padding: 4px">
 
         shading ____________
           color _________   |
