@@ -6,3 +6,4 @@ You can also check out my accounts on:
 - [Twitter](https://twitter.com/sandvrs)
 - [GitHub](https://github.com/sanderevers)
 - [Observable](https://observablehq.com/@sanderevers)
+- <a rel="me" href="https://mastodon.nl/@sandvrs">Mastodon</a>
